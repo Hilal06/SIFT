@@ -13,14 +13,16 @@ def addFileImage():
     for widget in frame.winfo_children():
         widget.destroy()
     filename = filedialog.askopenfilename(title="Select File")
+    # filename = ImageTk.PhotoImage(Image.open("images/book_sample.jpg"))
+    # img = ImageTk.PhotoImage(Image.open(filename))
+    # label = Frame(image=img)
+    # label.pack()
     image.append(filename)
     print(filename)
     for app in image:
         label = tk.Label(frame, text=app)
         label.pack()
-    # img = ImageTk.PhotoImage(Image.open(filename))
-    # label = Frame(image=img)
-    # label.pack(label)
+
 # def openImg():
 #     x = addFileImage()
 #     img = Image.open(x)
