@@ -2,6 +2,8 @@ from tkinter import *
 import tkinter as tk
 from PIL import ImageTk, Image
 from tkinter import filedialog
+import cv2
+
 
 root = tk.Tk()
 root.title('Face Detection By Image')
@@ -17,19 +19,16 @@ def addFileImage():
     # img = ImageTk.PhotoImage(Image.open(filename))
     # label = Frame(image=img)
     # label.pack()
-    image.append(filename)
-    print(filename)
+    cv2.imread(filename)
+
+    # image.append(filename)
+
+    # print(filename)
     for app in image:
         label = tk.Label(frame, text=app)
         label.pack()
 
-# def openImg():
-#     x = addFileImage()
-#     img = Image.open(x)
-#     img = ImageTk.PhotoImage(img)
-#     print(img)
-#     panel = Label(Frame, image=img)
-#     panel.image = img
+
 
 # Main Menu
 menubar = Menu(root)
