@@ -4,8 +4,8 @@ from matplotlib import pyplot as plt
 
 
 # # SIFT
-img1 = cv2.imread('sift1.jpg',0) # queryImage
-img2 = cv2.imread('sift2.jpg',0) # trainImage
+img1 = cv2.imread('in.jpg',0) # queryImage
+img2 = cv2.imread('out.jpg',0) # trainImage
 
 # Initiate SIFT detector
 sift = cv2.xfeatures2d.SIFT_create()
