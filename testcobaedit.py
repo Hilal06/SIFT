@@ -25,6 +25,7 @@ def select_image_new():
         imageinput = face_recognition.load_image_file(path)
         imageoutput = face_recognition.load_image_file(path)
 
+
         # declare to sift
         grayoutput = cv2.cvtColor(imageoutput, cv2.COLOR_BGR2GRAY)
         sift = cv2.xfeatures2d.SIFT_create()
@@ -52,7 +53,7 @@ def select_image_new():
         # change itu image from array
         imageinput = Image.fromarray(imageinput)
         kp2, des2 = sift.detectAndCompute(grayoutput, None)
-        imageoutput = cv2.drawKeypoints(face_image, kp2, flags=cv2.DRAW_MATCHES_FLAGS_DEFAULT, outImage=None)
+        imageoutput = cv2.drawKeypoints(face_image, kp2, flags=cv2.DrawMatchesFlags_DRAW_RICH_KEYPOINTS, outImage=None)
         imageoutput = Image.fromarray(imageoutput)
 
         # ...and then to ImageTk format
@@ -80,6 +81,8 @@ def select_image_new():
             panelA.image = imageinput
             panelB.image = imageoutput
 
+        cv2.imwrite('in.jpg', imageinput)
+        cv2.imwrite('out.jpg', imageoutput)
 
 # initialize the window toolkit along with the two image panels
 root = Tk()

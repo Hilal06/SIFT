@@ -6,6 +6,7 @@ import tkinter.filedialog as tkFileDialog
 import cv2
 import matplotlib.pyplot as plt
 import face_recognition
+import numpy as np
 
 
 
@@ -26,6 +27,7 @@ def select_image_new():
         imageoutput = face_recognition.load_image_file(path)
 
         # declare to sift
+        grayinput = cv2.cvtColor(imageoutput, cv2.COLOR_BGR2GRAY)
         grayoutput = cv2.cvtColor(imageoutput, cv2.COLOR_BGR2GRAY)
         sift = cv2.xfeatures2d.SIFT_create()
 
@@ -51,10 +53,46 @@ def select_image_new():
 
         # change itu image from array
         imageinput = Image.fromarray(imageinput)
-        kp2, des2 = sift.detectAndCompute(grayoutput, None)
-        imageoutput = cv2.drawKeypoints(face_image, kp2, flags=cv2.DRAW_MATCHES_FLAGS_DEFAULT, outImage=None)
+        kp, des = sift.detectAndCompute(np.asarray(imageinput), None)
+        kp2, des2 = sift.detectAndCompute(np.asarray(imageoutput), None)
+        imageoutput = cv2.drawKeypoints(face_image, kp2, flags=cv2.DrawMatchesFlags_DRAW_RICH_KEYPOINTS, outImage=None)
         imageoutput = Image.fromarray(imageoutput)
 
+
+        # grafik KNN 1
+        FLANN_INDEX_KDTREE = 0
+        index_params = dict(algorithm=FLANN_INDEX_KDTREE, trees=5)
+        search_params = dict(checks=5)  # or pass empty dictionary
+        flann = cv2.FlannBasedMatcher(index_params, search_params)
+
+        matches = flann.knnMatch(des, des2, k=2)
+
+        # Need to draw only good matches, so create a mask
+        matchesMask = [[0, 0] for i in range(len(matches))]
+
+        # ratio test as per Lowe's paper
+        for i, (m, n) in enumerate(matches):
+            if m.distance < 0.8 * n.distance:
+                matchesMask[i] = [1, 0]
+
+        draw_params = dict(
+            singlePointColor=(255, 0, 0),
+            matchesMask=matchesMask,
+            flags=0)
+
+        img3 = cv2.drawMatchesKnn(np.asarray(imageinput), kp, np.asarray(face_image), kp2, matches, None,
+                                  **draw_params)
+
+        # grafik KNN yang ke-2
+        # bf = cv2.BFMatcher()
+        # matches = bf.knnMatch(des, des2, k=2)
+        #
+        # good = []
+        # for m, n in matches:
+        #     if m.distance < 0.75 * n.distance:
+        #         good.append([m])
+        #
+        # img3 = cv2.drawMatchesKnn(np.asarray(imageinput), kp, np.asarray(face_image), kp2, good,np.asarray(face_image), flags=2)
         # ...and then to ImageTk format
         imageinput = ImageTk.PhotoImage(imageinput)
         imageoutput = ImageTk.PhotoImage(imageoutput)
@@ -80,6 +118,7 @@ def select_image_new():
             panelA.image = imageinput
             panelB.image = imageoutput
 
+        plt.imshow(img3), plt.show()
 
 # initialize the window toolkit along with the two image panels
 root = Tk()
